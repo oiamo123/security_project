@@ -1,0 +1,48 @@
+---
+import Layout from "../layouts/Layout.astro";
+import ProductCard from "../components/ProductCard.astro";
+import { getProducts } from "../api.js"
+import sanitizeHtml from "sanitize-html"
+
+const products = await getProducts()
+
+let flatProducts = products?.map(product => ({
+  id: product.dataValues.ProductId,
+  name: product.dataValues.ProductName,
+  description: product.dataValues.ProductDescription,
+  price: product.dataValues.ProductPrice,
+}));
+
+if (Astro.request.method == "POST") {
+  const data = await Astro.request.formData()
+  const dirtySearch = data.get("search") as String;
+  const cleanSearch = sanitizeHtml(dirtySearch)
+
+  if (cleanSearch?.length > 0) {
+    flatProducts = flatProducts?.filter(product => product.name.includes(cleanSearch))
+    console.log(flatProducts)
+  }
+}
+
+---
+<Layout title = "Home">
+    <div>
+{
+    flatProducts?.map(product => (
+      <ProductCard 
+        id={product.id}
+        name={product.name}
+        description={product.description}
+        price={product.price}
+      />
+    ))
+}</div>
+</Layout>
+<style>
+    div {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 3rem;
+        padding: 1rem;
+    }
+</style>

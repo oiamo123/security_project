@@ -1,0 +1,53 @@
+---
+import { verifyToken } from "../utils";
+
+let loggedIn = false;
+if (!Astro.cookies.has("token")) {
+    loggedIn = false;
+} else {
+    const { valid } = await verifyToken(Astro.cookies.get("token"))
+    if (!valid) {
+        loggedIn = false;
+    } else {
+        loggedIn = true;
+    }
+}
+
+const url = new URL(Astro.request.url)
+---
+<nav>
+    <h1>Products</h1>
+    {url.href == "http://localhost:4321/" && (
+        <form method="post">
+            <input type="text" name="search" id="search" placeholder="Apple">
+        <button class=".search-button" type="submit">Search</button>
+        </form>)}
+    {loggedIn ? (
+        <a href="/logout">Logout</a>
+    ): (
+    <div>
+        <a href="/">Home</a>
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+    </div>
+    )}
+</nav>
+<style>
+    nav {
+        display: flex;
+        align-items: center;
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 12px;
+    }
+    h1 {
+        margin: 0;
+    }
+    div {
+        display: flex;
+        gap: 1rem;
+    }
+    a {
+        text-decoration: none;
+    }
+</style>

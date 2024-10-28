@@ -1,0 +1,23 @@
+---
+const { name, id, description, price } = Astro.props;
+---
+
+<div>
+    <h3>{name}</h3>
+    <p>${Math.round(price * 100) / 100}</p>
+    <p>{description}</p>
+    <a href={`/product?id=${id}`}>View</a>
+</div>
+<style>
+    div {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        background-color: aliceblue;
+        border-radius: 6px;
+        margin: auto;
+        padding: 6px;
+        height: 100%;
+        width: 100%;
+    }
+</style>

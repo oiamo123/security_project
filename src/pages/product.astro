@@ -1,0 +1,35 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { getProduct } from "../api"
+import { verifyToken } from "../utils"
+import sanitizeHtml from "sanitize-html"
+
+if (!Astro.cookies.has("token")) {
+    return Astro.redirect("/login")
+} else {
+    const { valid, accessToken } = await verifyToken(Astro.cookies.get("token"));
+    if (valid) {
+        Astro.cookies.set("token", accessToken, {
+                path: "/",
+                expires: new Date(Date.now() + 1000 * 60 * 5),
+                httpOnly: true,
+                sameSite: false
+        }) // set access token
+    } else {
+        Astro.redirect("/login")
+    }
+}
+
+const url = new URL(Astro.request.url)
+const dirtyId = url.searchParams.get("id")
+const id = sanitizeHtml(dirtyId)
+const product = await getProduct(id)
+---
+<Layout title = {product?.ProductName || "Not found"}>
+    { product && (
+        <h1 class="name">{product.ProductName}</h1>
+        <p>{product.ProductDescription}</p>
+        <p class="price">{product.ProductPrice}</p>
+    ) || (<p>Product doesn't exist</p>)}
+    <a href="/">Add to cart</a>
+</Layout>

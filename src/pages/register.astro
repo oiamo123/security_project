@@ -1,0 +1,49 @@
+---
+import Layout from "../layouts/Layout.astro"
+import { registerUser } from "../api"
+import { logger } from "../utils";
+import sanitizeHtml from "sanitize-html"
+
+if (Astro.cookies.has("token")) {
+    return Astro.redirect("/")
+}
+
+let message = "";
+if (Astro.request.method === "POST") {
+    try {
+        const data = await Astro.request.formData();
+        const dirtyEmail = data.get("email");
+        const dirtyPassword = data.get("password");
+
+        const email = sanitizeHtml(dirtyEmail);
+        const password = sanitizeHtml(dirtyPassword);
+
+        message += await registerUser({ email, password });
+        if (message === "Success") Astro.redirect("/login");
+    } catch (err) {
+        logger.error(`An error occured while trying to register a user: ${err}`);
+        message = "There was an error.";
+    }
+}
+---
+
+<Layout title="Register">
+    <form method="post">
+        <label for="email">Email:</label>
+        <input type="email" name="email" id="email" required/>
+        
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" required/>
+        {message && <p>{message}</p>}
+        <button type="submit">Submit</button>
+    </form>
+</Layout>
+
+<style>
+    form {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+</style>

@@ -1,0 +1,30 @@
+---
+import Nav from '../components/Nav.astro'
+interface Props {
+    title: String
+}
+
+const { title } = Astro.props
+---
+<head>
+    <title>{title}</title>
+</head>
+<body>
+    <Nav />
+    <article>
+        <slot />
+    </article>
+</body>
+<style>
+    body {
+        min-height: 100vh;
+    }
+
+    article {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        min-height: 80vh;
+    }
+</style>
