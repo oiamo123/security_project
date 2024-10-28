@@ -28,13 +28,14 @@ if (Astro.request.method === "POST") {
 ---
 
 <Layout title="Register">
+    <h1>Register</h1>
     <form method="post">
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required/>
         
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required/>
-        {message && <p>{message}</p>}
+        {message && <p>{message === "Success" ? "Sucessfully Registered": message}</p>}
         <button type="submit">Submit</button>
     </form>
 </Layout>

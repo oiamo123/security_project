@@ -57,7 +57,7 @@ const verifyToken = async function (cookie) {
 
     return obj; // Return structured response
   } catch (err) {
-    console.error(err); // Log the error
+    logger.error(err); // Log the error
     return { valid: false }; // Return structured data
   }
 };
@@ -101,7 +101,7 @@ const checkRefreshToken = async function (user) {
     const accessToken = signAccessToken(user); // Sign a new access token
     return { valid: true, accessToken };
   } catch (err) {
-    console.error(err); // Log the error
+    logger.error(err); // Log the error
     return { valid: false }; // Return structured data
   }
 };
